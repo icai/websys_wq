@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.we7.cc" versionCode="">
+	<application setting="true">
+		<name><![CDATA[系统卡券]]></name>
+		<identifie><![CDATA[we7_coupon]]></identifie>
+		<version><![CDATA[4.3]]></version>
+		<type><![CDATA[]]></type>
+		<ability><![CDATA[微擎卡券]]></ability>
+		<description><![CDATA[微擎卡券。]]></description>
+		<author><![CDATA[蓝狐]]></author>
+		<url><![CDATA[lanhu.pw]]></url>
+	</application>
+	<platform>
+		<subscribes>
+		</subscribes>
+		<handles>
+		</handles>
+		<rule embed="false" />
+		<card embed="true" />
+		<supports>
+			<item type="app" />
+		</supports>
+	</platform>
+	<bindings>
+		<cover>
+			<entry title="收银台入口设置" do="clerk" state="" direct="false" />
+			<entry title="会员卡入口设置" do="card" state="" direct="false" />
+		</cover>
+		<menu>
+			<entry title="会员现金消费统计" do="statcash" state="" direct="false" />
+			<entry title="会员卡统计" do="statcard" state="" direct="false" />
+			<entry title="收银台收款统计" do="statpaycenter" state="" direct="false" />
+			<entry title="微信卡券回复" do="wxcardreply" state="" direct="false" />
+			<entry title="会员积分统计" do="statcredit1" state="" direct="false" />
+			<entry title="会员余额统计" do="statcredit2" state="" direct="false" />
+			<entry title="通知管理" do="noticemanage" state="" direct="false" />
+			<entry title="签到管理" do="signmanage" state="" direct="false" />
+			<entry title="门店收银台" do="paycenter" state="" direct="false" />
+			<entry title="门店管理" do="storelist" state="" direct="false" />
+			<entry title="店员管理" do="clerklist" state="" direct="false" />
+			<entry title="兑换真实物品" do="goodsexchange" state="" direct="false" />
+			<entry title="优惠券派发" do="couponmarket" state="" direct="false" />
+			<entry title="兑换优惠券" do="couponexchange" state="" direct="false" />
+			<entry title="优惠券管理" do="couponmanage" state="" direct="false" />
+			<entry title="优惠券核销" do="couponconsume" state="" direct="false" />
+			<entry title="会员属性" do="memberproperty" state="" direct="false" />
+			<entry title="会员卡设置" do="membercard" state="" direct="false" />
+			<entry title="会员卡管理" do="cardmanage" state="" direct="false" />
+		</menu>
+		<profile>
+			<entry title="会员卡" do="card" state="" direct="false" />
+			<entry title="兑换商城" do="activity" state="" direct="false" />
+		</profile>
+	</bindings>
+	<permissions>
+	</permissions>
+	<install><![CDATA[CREATE TABLE IF NOT EXISTS `ims_activity_clerk_menu` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`uniacid` int(11) NOT NULL,
+`displayorder` int(4) NOT NULL,
+`pid` int(6) NOT NULL,
+`group_name` varchar(20) NOT NULL,
+`title` varchar(20) NOT NULL,
+`icon` varchar(50) NOT NULL,
+`url` varchar(255) NOT NULL,
+`type` varchar(20) NOT NULL,
+`permission` varchar(50) NOT NULL,
+`system` int(2) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_activity_clerks` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`uid` int(10) unsigned NOT NULL,
+`storeid` int(10) unsigned NOT NULL,
+`name` varchar(20) NOT NULL,
+`password` varchar(20) NOT NULL,
+`mobile` varchar(20) NOT NULL,
+`openid` varchar(50) NOT NULL,
+`nickname` varchar(30) NOT NULL,
+PRIMARY KEY (`id`),
+KEY `uniacid` (`uniacid`),
+KEY `password` (`password`),
+KEY `openid` (`openid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_activity_coupon` (
+`couponid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`type` tinyint(4) NOT NULL,
+`title` varchar(30) NOT NULL,
+`couponsn` varchar(50) NOT NULL,
+`description` text,
+`discount` decimal(10,2) NOT NULL,
+`condition` decimal(10,2) NOT NULL,
+`starttime` int(10) unsigned NOT NULL,
+`endtime` int(10) unsigned NOT NULL,
+`limit` int(11) NOT NULL,
+`dosage` int(11) unsigned NOT NULL,
+`amount` int(11) unsigned NOT NULL,
+`thumb` varchar(500) NOT NULL,
+`credit` int(10) unsigned NOT NULL,
+`use_module` tinyint(3) unsigned NOT NULL,
+`credittype` varchar(20) NOT NULL,
+PRIMARY KEY (`couponid`),
+KEY `uniacid` (`uniacid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_activity_coupon_allocation` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`couponid` int(10) unsigned NOT NULL,
+`groupid` int(10) unsigned NOT NULL,
+PRIMARY KEY (`id`),
+KEY `uniacid` (`uniacid`,`couponid`,`groupid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_activity_coupon_modules` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`couponid` int(10) unsigned NOT NULL,
+`module` varchar(30) NOT NULL,
+PRIMARY KEY (`id`),
+KEY `uniacid` (`uniacid`),
+KEY `couponid` (`couponid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_activity_coupon_record` (
+`recid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`uid` int(10) unsigned NOT NULL,
+`code` varchar(50) NOT NULL,
+`grantmodule` varchar(50) NOT NULL,
+`granttime` int(10) unsigned NOT NULL,
+`usemodule` varchar(50) NOT NULL,
+`usetime` int(10) unsigned NOT NULL,
+`status` tinyint(4) NOT NULL,
+`operator` varchar(30) NOT NULL,
+`clerk_id` int(10) unsigned NOT NULL,
+`store_id` int(10) unsigned NOT NULL,
+`clerk_type` tinyint(3) unsigned NOT NULL,
+`remark` varchar(300) NOT NULL,
+`couponid` int(10) unsigned NOT NULL,
+PRIMARY KEY (`recid`),
+KEY `couponid` (`uid`,`grantmodule`,`usemodule`,`status`),
+KEY `uniacid` (`uniacid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_activity_exchange` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(11) NOT NULL,
+`title` varchar(100) NOT NULL,
+`description` text NOT NULL,
+`thumb` varchar(500) NOT NULL,
+`type` tinyint(1) unsigned NOT NULL,
+`extra` varchar(3000) NOT NULL,
+`credit` int(10) unsigned NOT NULL,
+`credittype` varchar(10) NOT NULL,
+`pretotal` int(11) NOT NULL,
+`num` int(11) NOT NULL,
+`total` int(10) unsigned NOT NULL,
+`status` tinyint(3) unsigned NOT NULL,
+`starttime` int(10) unsigned NOT NULL,
+`endtime` int(10) NOT NULL,
+PRIMARY KEY (`id`),
+KEY `extra` (`extra`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_activity_exchange_trades` (
+`tid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`uid` int(10) unsigned NOT NULL,
+`exid` int(10) unsigned NOT NULL,
+`type` int(10) unsigned NOT NULL,
+`createtime` int(10) unsigned NOT NULL,
+PRIMARY KEY (`tid`),
+KEY `uniacid` (`uniacid`,`uid`,`exid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_activity_exchange_trades_shipping` (
+`tid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`exid` int(10) unsigned NOT NULL,
+`uid` int(10) unsigned NOT NULL,
+`status` tinyint(4) NOT NULL,
+`createtime` int(10) unsigned NOT NULL,
+`province` varchar(30) NOT NULL,
+`city` varchar(30) NOT NULL,
+`district` varchar(30) NOT NULL,
+`address` varchar(255) NOT NULL,
+`zipcode` varchar(6) NOT NULL,
+`mobile` varchar(30) NOT NULL,
+`name` varchar(30) NOT NULL,
+PRIMARY KEY (`tid`),
+KEY `uniacid` (`uniacid`),
+KEY `uid` (`uid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_activity_modules` (
+`mid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`exid` int(10) unsigned NOT NULL,
+`module` varchar(50) NOT NULL,
+`uid` int(10) unsigned NOT NULL,
+`available` int(10) unsigned NOT NULL,
+PRIMARY KEY (`mid`),
+KEY `uniacid` (`uniacid`),
+KEY `module` (`module`),
+KEY `uid` (`uid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_activity_modules_record` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`mid` int(10) unsigned NOT NULL,
+`num` tinyint(3) NOT NULL,
+`createtime` int(10) unsigned NOT NULL,
+PRIMARY KEY (`id`),
+KEY `mid` (`mid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_activity_stores` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`business_name` varchar(50) NOT NULL,
+`branch_name` varchar(50) NOT NULL,
+`category` varchar(255) NOT NULL,
+`province` varchar(15) NOT NULL,
+`city` varchar(15) NOT NULL,
+`district` varchar(15) NOT NULL,
+`address` varchar(50) NOT NULL,
+`longitude` varchar(15) NOT NULL,
+`latitude` varchar(15) NOT NULL,
+`telephone` varchar(20) NOT NULL,
+`photo_list` varchar(10000) NOT NULL,
+`avg_price` int(10) unsigned NOT NULL,
+`open_time` varchar(50) NOT NULL,
+`recommend` varchar(255) NOT NULL,
+`special` varchar(255) NOT NULL,
+`introduction` varchar(255) NOT NULL,
+`location_id` int(10) unsigned NOT NULL,
+`status` tinyint(3) unsigned NOT NULL,
+`source` tinyint(3) unsigned NOT NULL,
+`message` varchar(500) NOT NULL,
+PRIMARY KEY (`id`),
+KEY `uniacid` (`uniacid`),
+KEY `location_id` (`location_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_mc_card` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`title` varchar(100) NOT NULL,
+`color` varchar(255) NOT NULL,
+`background` varchar(255) NOT NULL,
+`logo` varchar(255) NOT NULL,
+`format_type` tinyint(3) unsigned NOT NULL,
+`format` varchar(50) NOT NULL,
+`fields` varchar(1000) NOT NULL,
+`snpos` int(11) NOT NULL,
+`status` tinyint(1) NOT NULL,
+`business` text NOT NULL,
+`discount_type` tinyint(3) unsigned NOT NULL,
+`discount` varchar(3000) NOT NULL,
+`grant` varchar(3000) NOT NULL,
+`grant_rate` varchar(20) NOT NULL,
+`offset_rate` int(10) unsigned NOT NULL,
+`offset_max` int(10) NOT NULL,
+`nums_status` tinyint(3) unsigned NOT NULL,
+`nums_text` varchar(15) NOT NULL,
+`nums` varchar(1000) NOT NULL,
+`times_status` tinyint(3) unsigned NOT NULL,
+`times_text` varchar(15) NOT NULL,
+`times` varchar(1000) NOT NULL,
+`params` longtext NOT NULL,
+`html` longtext NOT NULL,
+`recharge` varchar(500) NOT NULL,
+`description` varchar(512) NOT NULL,
+`recommend_status` tinyint(3) unsigned NOT NULL,
+`sign_status` tinyint(3) unsigned NOT NULL,
+PRIMARY KEY (`id`),
+KEY `uniacid` (`uniacid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_mc_card_care` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`title` varchar(30) NOT NULL,
+`type` tinyint(3) unsigned NOT NULL,
+`groupid` int(10) unsigned NOT NULL,
+`credit1` int(10) unsigned NOT NULL,
+`credit2` int(10) unsigned NOT NULL,
+`couponid` int(10) unsigned NOT NULL,
+`granttime` int(10) unsigned NOT NULL,
+`days` int(10) unsigned NOT NULL,
+`time` tinyint(3) unsigned NOT NULL,
+`show_in_card` tinyint(3) unsigned NOT NULL,
+`content` varchar(1000) NOT NULL,
+`sms_notice` tinyint(3) unsigned NOT NULL,
+PRIMARY KEY (`id`),
+KEY `uniacid` (`uniacid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_mc_card_credit_set` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`sign` varchar(1000) NOT NULL,
+`share` varchar(500) NOT NULL,
+`content` text NOT NULL,
+PRIMARY KEY (`id`),
+KEY `uniacid` (`uniacid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_mc_card_members` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`uid` int(10),
+`openid` varchar(50) NOT NULL,
+`cid` int(10) NOT NULL,
+`cardsn` varchar(20) NOT NULL,
+`status` tinyint(1) NOT NULL,
+`createtime` int(10) unsigned NOT NULL,
+`nums` int(10) unsigned NOT NULL,
+`endtime` int(10) unsigned NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_mc_card_notices` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`uid` int(10) unsigned NOT NULL,
+`type` tinyint(3) unsigned NOT NULL,
+`title` varchar(30) NOT NULL,
+`thumb` varchar(100) NOT NULL,
+`groupid` int(10) unsigned NOT NULL,
+`content` text NOT NULL,
+`addtime` int(10) unsigned NOT NULL,
+PRIMARY KEY (`id`),
+KEY `uniacid` (`uniacid`),
+KEY `uid` (`uid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_mc_card_notices_unread` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`notice_id` int(10) unsigned NOT NULL,
+`uid` int(10) unsigned NOT NULL,
+`is_new` tinyint(3) unsigned NOT NULL,
+`type` tinyint(3) unsigned NOT NULL,
+PRIMARY KEY (`id`),
+KEY `uniacid` (`uniacid`),
+KEY `uid` (`uid`),
+KEY `notice_id` (`notice_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_mc_card_recommend` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`title` varchar(30) NOT NULL,
+`thumb` varchar(100) NOT NULL,
+`url` varchar(100) NOT NULL,
+`displayorder` tinyint(3) unsigned NOT NULL,
+`addtime` int(10) unsigned NOT NULL,
+PRIMARY KEY (`id`),
+KEY `uniacid` (`uniacid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_mc_card_record` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`uid` int(10) unsigned NOT NULL,
+`type` varchar(15) NOT NULL,
+`model` tinyint(3) unsigned NOT NULL,
+`fee` decimal(10,2) unsigned NOT NULL,
+`tag` varchar(10) NOT NULL,
+`note` varchar(255) NOT NULL,
+`remark` varchar(200) NOT NULL,
+`addtime` int(10) unsigned NOT NULL,
+PRIMARY KEY (`id`),
+KEY `uniacid` (`uniacid`),
+KEY `uid` (`uid`),
+KEY `addtime` (`addtime`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `ims_mc_card_sign_record` (
+`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+`uniacid` int(10) unsigned NOT NULL,
+`uid` int(10) unsigned NOT NULL,
+`credit` int(10) unsigned NOT NULL,
+`is_grant` tinyint(3) unsigned NOT NULL,
+`addtime` int(10) unsigned NOT NULL,
+PRIMARY KEY (`id`),
+KEY `uniacid` (`uniacid`),
+KEY `uid` (`uid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;]]></install>
+	<uninstall><![CDATA[DROP TABLE IF EXISTS `ims_activity_clerk_menu`;
+DROP TABLE IF EXISTS `ims_activity_clerks`;
+DROP TABLE IF EXISTS `ims_activity_coupon`;
+DROP TABLE IF EXISTS `ims_activity_coupon_allocation`;
+DROP TABLE IF EXISTS `ims_activity_coupon_modules`;
+DROP TABLE IF EXISTS `ims_activity_coupon_record`;
+DROP TABLE IF EXISTS `ims_activity_exchange`;
+DROP TABLE IF EXISTS `ims_activity_exchange_trades`;
+DROP TABLE IF EXISTS `ims_activity_exchange_trades_shipping`;
+DROP TABLE IF EXISTS `ims_activity_modules`;
+DROP TABLE IF EXISTS `ims_activity_modules_record`;
+DROP TABLE IF EXISTS `ims_activity_stores`;
+DROP TABLE IF EXISTS `ims_mc_card`;
+DROP TABLE IF EXISTS `ims_mc_card_care`;
+DROP TABLE IF EXISTS `ims_mc_card_credit_set`;
+DROP TABLE IF EXISTS `ims_mc_card_members`;
+DROP TABLE IF EXISTS `ims_mc_card_notices`;
+DROP TABLE IF EXISTS `ims_mc_card_notices_unread`;
+DROP TABLE IF EXISTS `ims_mc_card_recommend`;
+DROP TABLE IF EXISTS `ims_mc_card_record`;
+DROP TABLE IF EXISTS `ims_mc_card_sign_record`;]]></uninstall>
+	<upgrade><![CDATA[upgrade.php]]></upgrade>
+</manifest>
